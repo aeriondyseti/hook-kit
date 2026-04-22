@@ -137,3 +137,9 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Local-only state
+.claude/settings.local.json
+.claude/CLAUDE.local.md
+.vector-memory/
+__ARCHIVE__/

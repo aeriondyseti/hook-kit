@@ -1,0 +1,62 @@
+{
+    "name": "@aeriondyseti/hook-kit",
+    "version": "1.0.0",
+    "description": "Ergonomic helpers for writing Claude Code hook scripts.",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aeriondyseti/hook-kit.git"
+    },
+    "homepage": "https://github.com/aeriondyseti/hook-kit#readme",
+    "bugs": {
+        "url": "https://github.com/aeriondyseti/hook-kit/issues"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
+        "./testing": {
+            "types": "./dist/testing.d.ts",
+            "import": "./dist/testing.js"
+        }
+    },
+    "files": [
+        "dist",
+        "examples",
+        "README.md",
+        "CHANGELOG.md",
+        "ROADMAP.md",
+        "TECH-DEBT.md"
+    ],
+    "license": "MIT",
+    "keywords": [
+        "claude",
+        "claude-code",
+        "hook",
+        "hooks",
+        "cli",
+        "anthropic"
+    ],
+    "engines": {
+        "node": ">=20"
+    },
+    "scripts": {
+        "build": "tsup",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "dependencies": {
+        "string-width": "^7.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.14.0",
+        "tsup": "^8.2.0",
+        "typescript": "^5.6.0",
+        "vitest": "^2.1.0"
+    }
+}

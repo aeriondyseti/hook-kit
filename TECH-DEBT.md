@@ -1,0 +1,77 @@
+# Tech Debt
+
+Known shortcuts and intentional deferrals. Each entry names the location,
+what's unusual, and the trigger that should prompt a revisit — so a
+contributor can tell "we already thought about this and chose not to fix
+it" from "nobody looked at this."
+
+## Deliberate API omissions
+
+### Tables are left-aligned only
+
+- **Where:** `src/output/OutputBuilder.ts` — `appendTable` / `TableOptions`
+- **Why:** Alignment was cut from the v1 MVP (dropped the `align` option
+  mid-design). Left-align is the 80% case; right/center can ship when
+  someone has a concrete use.
+- **Revisit when:** first user asks, or we ship a monetary/metric table
+  example in `examples/`.
+
+### No ASCII fallback for box/table drawing
+
+- **Where:** `src/output/OutputBuilder.ts` — `appendBox`, `appendTable`
+- **Why:** Hook output goes to Claude Code, which renders unicode box
+  characters correctly. An ASCII path adds a theme flag plus per-char
+  lookups for zero benefit in the primary use case.
+- **Revisit when:** someone needs hook output piped to a plain-text log or
+  a terminal without unicode support.
+
+### `tool_input` / `tool_response` typed as `Record<string, unknown>` / `unknown`
+
+- **Where:** `src/events/PreToolUse.ts`, `src/events/PostToolUse.ts`
+- **Why:** Fully-typed variants keyed on `tool_name` would need a
+  maintained registry of Claude Code tool schemas, which drifts. The loose
+  shape is honest about what we actually know.
+- **Revisit when:** Claude Code publishes an official schema, or a small
+  subset (Bash, Read, Write, Edit) becomes worth hand-maintaining.
+
+## Implementation shortcuts
+
+### Same-kind tag nesting doesn't restore outer state
+
+- **Where:** `src/formatting/tags.ts`
+- **Why:** The current renderer is a regex-replace, not a stack. Closing
+  `</color>` always emits the default foreground, so
+  `<color:"red">..<color:"blue">..</color>..</color>` loses the red. Noted
+  in the file header; cross-kind nesting (`<bold><color>`) works.
+- **Revisit when:** a user hits it in practice or we add a third styling
+  dimension (currently only `color` and `bg` are same-kind).
+
+### `appendDivider` doesn't reflow `char` to fit partial widths
+
+- **Where:** `src/output/OutputBuilder.ts` — `appendDivider`
+- **Why:** For a multi-cell `char` like `'-='`, we emit as many complete
+  copies as fit and skip the trailing partial. Matching a partial run
+  (e.g. `-=-=-=-`) would need logic to split `char` at a cell boundary,
+  which isn't trivial for emoji.
+- **Revisit when:** someone actually asks for trailing partials.
+
+### Emit uses a thrown sentinel
+
+- **Where:** `src/events/_emit.ts` — `_CAPTURED_SENTINEL`
+- **Why:** `emitJson` calls `process.exit(0)` in production. Tests need to
+  observe the emitted payload without exiting the test runner. We throw a
+  symbol and let `testHook` catch it. It's clever; it works; it's
+  documented inline. A cleaner alternative would refactor `emitJson` to
+  accept an explicit sink.
+- **Revisit when:** the testing harness grows enough that the cleverness
+  costs more than the refactor.
+
+### `process.stdout.columns` check in `appendDivider`
+
+- **Where:** `src/output/OutputBuilder.ts` — `detectWidth`
+- **Why:** Hook scripts run as subprocesses of Claude Code, so
+  `process.stdout.columns` is `undefined` (stdout is a pipe). We probe
+  `process.stderr.columns` instead, which is often still attached to the
+  terminal. This works in practice but is surprising.
+- **Revisit when:** Claude Code starts setting `$COLUMNS` in the hook
+  environment (the preferred signal if it ever lands).
