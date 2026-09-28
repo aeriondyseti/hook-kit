@@ -3,16 +3,41 @@
  */
 import { readFileSync } from 'node:fs';
 
+/** Every hook event Claude Code fires, in the order its schema lists them. */
 export const HOOK_EVENT_NAMES = [
     'PreToolUse',
     'PostToolUse',
+    'PostToolUseFailure',
+    'PostToolBatch',
+    'Notification',
     'UserPromptSubmit',
+    'UserPromptExpansion',
     'SessionStart',
     'SessionEnd',
     'Stop',
+    'StopFailure',
+    'SubagentStart',
     'SubagentStop',
-    'Notification',
     'PreCompact',
+    'PostCompact',
+    'PreModelSwitch',
+    'PostModelSwitch',
+    'PermissionRequest',
+    'PermissionDenied',
+    'Setup',
+    'TeammateIdle',
+    'TaskCreated',
+    'TaskCompleted',
+    'Elicitation',
+    'ElicitationResult',
+    'ConfigChange',
+    'WorktreeCreate',
+    'WorktreeRemove',
+    'InstructionsLoaded',
+    'CwdChanged',
+    'FileChanged',
+    'DirectoryAdded',
+    'MessageDisplay',
 ] as const;
 
 export type HookEventName = typeof HOOK_EVENT_NAMES[number];
@@ -44,6 +69,25 @@ export interface McpServerInfo {
         'sdk' | 'plugin' | 'user' | 'project' | 'local' | 'dynamic' | 'managed' | 'enterprise' | 'claudeai' | 'agent'
     >;
 }
+
+export type PermissionRuleBehavior = 'allow' | 'deny' | 'ask';
+
+export type PermissionDestination = 'userSettings' | 'projectSettings' | 'localSettings' | 'session' | 'cliArg';
+
+export interface PermissionRule {
+    toolName: string;
+    ruleContent?: string;
+}
+
+/**
+ * A change to permission settings — what "always allow" in the permission
+ * dialog applies. `PermissionRequest` receives these as suggestions and can
+ * return them as `updatedPermissions`.
+ */
+export type PermissionUpdate =
+    | { type: 'addRules' | 'replaceRules' | 'removeRules'; rules: PermissionRule[]; behavior: PermissionRuleBehavior; destination: PermissionDestination }
+    | { type: 'setMode'; mode: PermissionMode; destination: PermissionDestination }
+    | { type: 'addDirectories' | 'removeDirectories'; directories: string[]; destination: PermissionDestination };
 
 /**
  * Common fields every hook receives. Keys match the Claude Code hook spec

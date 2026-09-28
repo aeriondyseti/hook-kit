@@ -29,11 +29,20 @@ export function _clearEmitCapture(): void {
 }
 
 export function emitJson(payload: object, exitCode = 0): never {
+    return emitRaw(payload, JSON.stringify(payload), exitCode);
+}
+
+/** For the rare event whose protocol is plain stdout text, not JSON (WorktreeCreate). */
+export function emitText(text: string, exitCode = 0): never {
+    return emitRaw(text, text, exitCode);
+}
+
+function emitRaw(payload: unknown, serialized: string, exitCode: number): never {
     if (_capture) {
         _capture.payload = payload;
         _capture.exitCode = exitCode;
         throw _CAPTURED_SENTINEL;
     }
-    writeSync(1, JSON.stringify(payload));
+    writeSync(1, serialized);
     process.exit(exitCode);
 }

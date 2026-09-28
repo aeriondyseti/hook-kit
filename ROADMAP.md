@@ -58,6 +58,17 @@ the default.
 
 ## Events
 
+### `classifierContext` on PostToolUse
+
+Claude Code accepts a `classifierContext` string on PostToolUse that is
+shown to the auto-mode permission classifier. It's deliberately left out:
+the field carries security caveats (only relay genuine user statements,
+shared 2000-char budget, ignored on async hooks) that a one-line option
+would hide. Add it with those caveats in the doc comment once someone
+needs it.
+
+### Tool input typing
+
 Richer input typing for `tool_input` / `tool_response` on PreToolUse and
 PostToolUse. Today they're `Record<string, unknown>` / `unknown` —
 accurate but unhelpful. A `ToolInputs` union keyed on `tool_name` would let
@@ -87,3 +98,6 @@ dedicated helper might still be worth it.
 - More examples for the "quiet" events (`Notification`, `PreCompact`,
   `SessionEnd`, `Stop`, `SubagentStop`) if they turn out to have
   non-obvious use cases beyond logging.
+- Examples for the newer decision events — `PermissionRequest` (answer
+  the dialog), `WorktreeCreate` (custom worktree backend), `Elicitation`
+  (auto-fill an MCP form) — which have the least obvious contracts.

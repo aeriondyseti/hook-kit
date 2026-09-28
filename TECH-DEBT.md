@@ -27,12 +27,27 @@ it" from "nobody looked at this."
 
 ### `tool_input` / `tool_response` typed as `Record<string, unknown>` / `unknown`
 
-- **Where:** `src/events/PreToolUse.ts`, `src/events/PostToolUse.ts`
+- **Where:** `src/events/PreToolUse.ts`, `src/events/PostToolUse.ts`, and
+  every other tool event (`PostToolUseFailure`, `PostToolBatch`,
+  `PermissionRequest`, `PermissionDenied`)
 - **Why:** Fully-typed variants keyed on `tool_name` would need a
   maintained registry of Claude Code tool schemas, which drifts. The loose
   shape is honest about what we actually know.
 - **Revisit when:** Claude Code publishes an official schema, or a small
   subset (Bash, Read, Write, Edit) becomes worth hand-maintaining.
+
+### Event types are hand-synced to one Claude Code release
+
+- **Where:** `src/events/*.ts`, `src/common.ts` (`HOOK_EVENT_NAMES`)
+- **Why:** Claude Code doesn't publish its hook schema as a package. The
+  types were checked field-by-field against the zod schemas embedded in
+  Claude Code 2.1.283. Fields Claude Code types as open strings that grow
+  between releases (`notification_type`, `permission_mode`) use
+  `OpenUnion` so new values don't break parsing. Closed enums
+  (`SessionStart.source`, `SessionEnd.reason`, ...) will silently fall
+  behind when Claude Code adds a value.
+- **Revisit when:** a Claude Code release notes a hook change, or Anthropic
+  publishes an official schema package (then generate from it).
 
 ## Implementation shortcuts
 

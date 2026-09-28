@@ -11,6 +11,23 @@ Synced with the Claude Code 2.1.283 hook schema.
 
 ### Added
 
+- 24 new event classes, covering every hook event Claude Code fires:
+  `PostToolUseFailure`, `PostToolBatch`, `PermissionRequest`,
+  `PermissionDenied`, `UserPromptExpansion`, `SubagentStart`,
+  `StopFailure`, `PostCompact`, `Setup`, `PreModelSwitch`,
+  `PostModelSwitch`, `TeammateIdle`, `TaskCreated`, `TaskCompleted`,
+  `Elicitation`, `ElicitationResult`, `ConfigChange`, `WorktreeCreate`,
+  `WorktreeRemove`, `InstructionsLoaded`, `CwdChanged`, `FileChanged`,
+  `DirectoryAdded`, `MessageDisplay` — each with a `mockXxx` factory in
+  `/testing`. `HOOK_EVENT_NAMES` lists all 33.
+- `PermissionRequest.emitOutput` options are a discriminated union on
+  `decision`, so allow-only / deny-only fields can't be mixed.
+- `WorktreeCreate.emitOutput({ worktreePath })` prints the bare path, as
+  command hooks for that event require (the one non-JSON reply).
+- `PermissionUpdate` and related permission types.
+- `TestHookResult.wasDenied` / `wasAllowed` / `toClaude` understand
+  PermissionRequest's `decision.behavior` / `decision.message`.
+- README: an events table showing what each event can do.
 - Common input fields: `prompt_id`, `agent_id`, `agent_type`, `effort`.
   `permission_mode` is now typed as `PermissionMode`.
 - `terminalSequence` emit option on every event (OSC desktop notifications).
