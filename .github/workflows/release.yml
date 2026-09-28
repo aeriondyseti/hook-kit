@@ -1,0 +1,42 @@
+name: Release
+
+# Publishes to npm when a version tag is pushed (see "Release" in CLAUDE.md).
+# Auth is npm trusted publishing (OIDC) — no NPM_TOKEN secret. It's configured
+# once on npmjs.com under the package's Settings → Trusted Publisher, pointing
+# at this repo and this workflow file.
+on:
+    push:
+        tags: ['v*']
+
+permissions:
+    contents: read
+    id-token: write # OIDC token for trusted publishing; also enables provenance
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+
+            # Trusted publishing needs npm >= 11.5.1, which Node 24 bundles.
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  registry-url: https://registry.npmjs.org
+                  cache: npm
+
+            - name: Check tag matches package.json version
+              run: |
+                  version="$(node -p "require('./package.json').version")"
+                  if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+                      echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+                      exit 1
+                  fi
+
+            - run: npm ci
+            - run: npm run build
+            - run: npm test
+            - run: npx tsc --noEmit
+            - run: npx tsc -p examples/tsconfig.json
+
+            - run: npm publish

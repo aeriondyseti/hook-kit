@@ -103,8 +103,12 @@ Semver + [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 2. Move `[Unreleased]` entries to a dated `[x.y.z]` section in CHANGELOG.
 3. `npm run build && npm test && npx tsc --noEmit`.
 4. `npm pack --dry-run` — review the file list.
-5. Commit as `Release x.y.z`, tag `vx.y.z`.
-6. `npm publish && git push origin main --follow-tags` (user runs this).
+5. Commit as `Release x.y.z`, then `git tag -a vx.y.z -m "Release x.y.z"`.
+   Annotated, not lightweight: `--follow-tags` skips lightweight tags, and
+   the tag push is what triggers the publish.
+6. `git push origin main --follow-tags` (user runs this). The tag fires
+   `.github/workflows/release.yml`, which re-runs the checks and publishes
+   to npm via trusted publishing. Don't `npm publish` by hand.
 
 ## Memory and this file
 
