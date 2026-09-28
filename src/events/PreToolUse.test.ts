@@ -41,7 +41,7 @@ describe('PreToolUse.emitOutput', () => {
             PreToolUse.parse();
             PreToolUse.emitOutput({ toUser: 'hello user' });
         });
-        expect(payload).toEqual({ systemMessage: 'hello user' });
+        expect(payload).toEqual({ systemMessage: '\nhello user' });
     });
 
     it('renders an OutputBuilder passed as toUser', () => {
@@ -129,7 +129,7 @@ describe('PreToolUse.emitOutput', () => {
             });
         });
         expect(payload).toEqual({
-            systemMessage: 'denied',
+            systemMessage: '\ndenied',
             hookSpecificOutput: {
                 hookEventName: 'PreToolUse',
                 permissionDecision: 'deny',

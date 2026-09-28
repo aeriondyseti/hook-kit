@@ -25,6 +25,6 @@ describe('SessionEnd', () => {
             SessionEnd.parse();
             SessionEnd.emitOutput({ toUser: 'bye' });
         });
-        expect(payload).toEqual({ systemMessage: 'bye' });
+        expect(payload).toEqual({ systemMessage: '\nbye' });
     });
 });

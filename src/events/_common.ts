@@ -19,7 +19,12 @@ export function asString(body: string | OutputBuilder): string {
 }
 
 export interface CommonEmitOptions {
-    /** Shown to the user in the Claude Code UI. Maps to `systemMessage`. */
+    /**
+     * Shown to the user in the Claude Code UI. Maps to `systemMessage`,
+     * with a leading newline prepended so the first row of formatted output
+     * (a box's top border, a table header) doesn't render on the same line
+     * as Claude Code's hook label.
+     */
     toUser?: string | OutputBuilder;
     /** Default true. Setting false tells Claude to stop entirely. */
     continue?: boolean;
@@ -37,7 +42,7 @@ export interface CommonJsonOutput {
 }
 
 export function mixinCommon<T extends CommonJsonOutput>(out: T, opts: CommonEmitOptions): T {
-    if (opts.toUser !== undefined) out.systemMessage = asString(opts.toUser);
+    if (opts.toUser !== undefined) out.systemMessage = '\n' + asString(opts.toUser);
     if (opts.continue !== undefined) out.continue = opts.continue;
     if (opts.stopReason !== undefined) out.stopReason = opts.stopReason;
     if (opts.suppressOutput !== undefined) out.suppressOutput = opts.suppressOutput;

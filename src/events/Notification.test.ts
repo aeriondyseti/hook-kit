@@ -27,6 +27,6 @@ describe('Notification', () => {
             Notification.parse();
             Notification.emitOutput({ toUser: 'heads up' });
         });
-        expect(payload).toEqual({ systemMessage: 'heads up' });
+        expect(payload).toEqual({ systemMessage: '\nheads up' });
     });
 });

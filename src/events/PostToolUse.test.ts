@@ -63,6 +63,6 @@ describe('PostToolUse', () => {
             PostToolUse.parse();
             PostToolUse.emitOutput({ toUser: 'seen' });
         });
-        expect(payload).toEqual({ systemMessage: 'seen' });
+        expect(payload).toEqual({ systemMessage: '\nseen' });
     });
 });

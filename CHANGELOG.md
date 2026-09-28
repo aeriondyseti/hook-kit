@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `emitOutput`'s `toUser` option now prepends a newline to the emitted
+  `systemMessage`, so multi-line formatted output (a box's top border, a
+  table header) no longer renders on the same line as Claude Code's hook
+  label.
+
 ## [1.0.0] - 2026-04-22
 
 ### Added

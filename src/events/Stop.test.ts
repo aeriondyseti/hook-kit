@@ -33,6 +33,6 @@ describe('Stop', () => {
             Stop.parse();
             Stop.emitOutput({ toUser: 'finished' });
         });
-        expect(payload).toEqual({ systemMessage: 'finished' });
+        expect(payload).toEqual({ systemMessage: '\nfinished' });
     });
 });

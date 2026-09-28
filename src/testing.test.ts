@@ -98,7 +98,7 @@ describe('TestHookResult normalized fields', () => {
         const r = testHook(mockPreToolUse(), () =>
             PreToolUse.emitOutput({ toUser: 'hello user' }),
         );
-        expect(r.toUser).toBe('hello user');
+        expect(r.toUser).toBe('\nhello user');
     });
 
     it('toClaude surfaces additionalContext when present', () => {

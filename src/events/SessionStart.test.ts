@@ -40,6 +40,6 @@ describe('SessionStart', () => {
             SessionStart.parse();
             SessionStart.emitOutput({ toUser: 'welcome' });
         });
-        expect(payload).toEqual({ systemMessage: 'welcome' });
+        expect(payload).toEqual({ systemMessage: '\nwelcome' });
     });
 });

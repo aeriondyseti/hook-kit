@@ -46,6 +46,6 @@ describe('UserPromptSubmit', () => {
             UserPromptSubmit.parse();
             UserPromptSubmit.emitOutput({ toUser: 'hello' });
         });
-        expect(payload).toEqual({ systemMessage: 'hello' });
+        expect(payload).toEqual({ systemMessage: '\nhello' });
     });
 });
