@@ -61,12 +61,14 @@ export interface TestHookResult<P = unknown> {
     wasDenied: boolean;
     /**
      * True if the hook's emit signaled allow — either an explicit
-     * `permissionDecision: 'allow'`, or no blocking/ask signal at all
+     * `permissionDecision: 'allow'`, or no blocking/ask/defer signal at all
      * (an empty emit means "let it proceed").
      */
     wasAllowed: boolean;
     /** True if `permissionDecision === 'ask'` (PreToolUse only). */
     wasAsked: boolean;
+    /** True if `permissionDecision === 'defer'` (PreToolUse only). */
+    wasDeferred: boolean;
 
     /** Shortcut to `payload.systemMessage` — what the user will see. */
     toUser: string | undefined;
@@ -94,13 +96,15 @@ function summarize(payload: unknown): Omit<TestHookResult, 'payload' | 'exitCode
     const permissionDecision = p.hookSpecificOutput?.permissionDecision;
     const wasDenied = permissionDecision === 'deny' || p.decision === 'block';
     const wasAsked = permissionDecision === 'ask';
+    const wasDeferred = permissionDecision === 'defer';
     const wasAllowed =
-        permissionDecision === 'allow' || (!wasDenied && !wasAsked);
+        permissionDecision === 'allow' || (!wasDenied && !wasAsked && !wasDeferred);
 
     return {
         wasDenied,
         wasAllowed,
         wasAsked,
+        wasDeferred,
         toUser: p.systemMessage,
         toClaude:
             p.hookSpecificOutput?.additionalContext ??
@@ -183,6 +187,7 @@ export function mockPreCompact(overrides: Partial<PreCompactInput> = {}): PreCom
     return {
         ...commonDefaults('PreCompact'),
         trigger: 'auto',
+        custom_instructions: null,
         ...overrides,
     };
 }
@@ -226,6 +231,9 @@ export function mockSubagentStop(overrides: Partial<SubagentStopInput> = {}): Su
     return {
         ...commonDefaults('SubagentStop'),
         stop_hook_active: false,
+        agent_id: 'test-agent-id',
+        agent_type: 'general-purpose',
+        agent_transcript_path: '/tmp/test-agent-transcript.jsonl',
         ...overrides,
     };
 }

@@ -65,4 +65,14 @@ describe('PostToolUse', () => {
         });
         expect(payload).toEqual({ systemMessage: 'seen' });
     });
+
+    it('maps updatedToolOutput', () => {
+        const { payload } = testHook(baseInput, () => {
+            PostToolUse.parse();
+            PostToolUse.emitOutput({ updatedToolOutput: 'redacted' });
+        });
+        expect(payload).toEqual({
+            hookSpecificOutput: { hookEventName: 'PostToolUse', updatedToolOutput: 'redacted' },
+        });
+    });
 });

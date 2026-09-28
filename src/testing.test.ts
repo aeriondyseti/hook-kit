@@ -79,6 +79,15 @@ describe('TestHookResult normalized fields', () => {
         expect(r.wasAllowed).toBe(false);
     });
 
+    it('wasDeferred is true for PreToolUse permissionDecision=defer', () => {
+        const r = testHook(mockPreToolUse(), () =>
+            PreToolUse.emitOutput({ decision: 'defer' }),
+        );
+        expect(r.wasDeferred).toBe(true);
+        expect(r.wasAllowed).toBe(false);
+        expect(r.wasDenied).toBe(false);
+    });
+
     it('wasDenied is true for binary deny via top-level decision=block', () => {
         const r = testHook(mockPostToolUse(), () =>
             PostToolUse.emitOutput({ deny: true, reason: 'no' }),

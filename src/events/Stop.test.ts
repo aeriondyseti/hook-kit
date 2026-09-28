@@ -35,4 +35,30 @@ describe('Stop', () => {
         });
         expect(payload).toEqual({ systemMessage: 'finished' });
     });
+
+    it('parses last_assistant_message and background_tasks', () => {
+        const input: StopInput = {
+            ...baseInput,
+            last_assistant_message: 'All done.',
+            background_tasks: [{ id: 't1', type: 'shell', status: 'running', description: 'npm test', command: 'npm test' }],
+        };
+        testHook(input, () => {
+            const parsed = Stop.parse();
+            expect(parsed.last_assistant_message).toBe('All done.');
+            expect(parsed.background_tasks?.[0]?.command).toBe('npm test');
+            Stop.emitOutput({});
+        });
+    });
+
+    it('maps toClaude to hookSpecificOutput.additionalContext alongside deny', () => {
+        const { payload } = testHook(baseInput, () => {
+            Stop.parse();
+            Stop.emitOutput({ deny: true, reason: 'tests failing', toClaude: 'see test output' });
+        });
+        expect(payload).toEqual({
+            decision: 'block',
+            reason: 'tests failing',
+            hookSpecificOutput: { hookEventName: 'Stop', additionalContext: 'see test output' },
+        });
+    });
 });

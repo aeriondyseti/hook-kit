@@ -42,4 +42,35 @@ describe('SessionStart', () => {
         });
         expect(payload).toEqual({ systemMessage: 'welcome' });
     });
+
+    it('parses a fork without a model', () => {
+        const { model: _model, ...rest } = baseInput;
+        testHook({ ...rest, source: 'fork' }, () => {
+            const input = SessionStart.parse();
+            expect(input.source).toBe('fork');
+            expect(input.model).toBeUndefined();
+            SessionStart.emitOutput({});
+        });
+    });
+
+    it('maps initialUserMessage, sessionTitle, watchPaths, reloadSkills', () => {
+        const { payload } = testHook(baseInput, () => {
+            SessionStart.parse();
+            SessionStart.emitOutput({
+                initialUserMessage: 'go',
+                sessionTitle: 'Refactor',
+                watchPaths: ['.env'],
+                reloadSkills: true,
+            });
+        });
+        expect(payload).toEqual({
+            hookSpecificOutput: {
+                hookEventName: 'SessionStart',
+                initialUserMessage: 'go',
+                sessionTitle: 'Refactor',
+                watchPaths: ['.env'],
+                reloadSkills: true,
+            },
+        });
+    });
 });

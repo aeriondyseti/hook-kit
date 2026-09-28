@@ -16,13 +16,13 @@
  */
 
 // Event classes + their input/option types.
-export { Notification, type NotificationEmitOptions, type NotificationInput } from './events/Notification.js';
+export { Notification, type NotificationEmitOptions, type NotificationInput, type NotificationType } from './events/Notification.js';
 export { PostToolUse, type PostToolUseEmitOptions, type PostToolUseInput } from './events/PostToolUse.js';
 export { PreCompact, type PreCompactEmitOptions, type PreCompactInput } from './events/PreCompact.js';
 export { PreToolUse, type PreToolUseEmitOptions, type PreToolUseInput } from './events/PreToolUse.js';
 export { SessionEnd, type SessionEndEmitOptions, type SessionEndInput } from './events/SessionEnd.js';
 export { SessionStart, type SessionStartEmitOptions, type SessionStartInput } from './events/SessionStart.js';
-export { Stop, type StopEmitOptions, type StopInput } from './events/Stop.js';
+export { Stop, type BackgroundTask, type SessionCron, type StopEmitOptions, type StopInput } from './events/Stop.js';
 export { SubagentStop, type SubagentStopEmitOptions, type SubagentStopInput } from './events/SubagentStop.js';
 export { UserPromptSubmit, type UserPromptSubmitEmitOptions, type UserPromptSubmitInput } from './events/UserPromptSubmit.js';
 
@@ -44,7 +44,11 @@ export {
     HOOK_EVENT_NAMES,
     type CommonHookInput,
     type DecisionType,
+    type EffortLevel,
     type HookEventName,
+    type McpServerInfo,
+    type OpenUnion,
+    type PermissionMode,
 } from './common.js';
 export { HookParseError } from './events/_parse.js';
 export { runHook } from './runHook.js';

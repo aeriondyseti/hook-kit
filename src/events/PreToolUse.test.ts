@@ -138,4 +138,14 @@ describe('PreToolUse.emitOutput', () => {
             },
         });
     });
+
+    it('maps decision defer', () => {
+        const { payload } = testHook(baseInput, () => {
+            PreToolUse.parse();
+            PreToolUse.emitOutput({ decision: 'defer' });
+        });
+        expect(payload).toEqual({
+            hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'defer' },
+        });
+    });
 });

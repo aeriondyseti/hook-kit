@@ -13,9 +13,9 @@
  * JSON field names by `emitOutput`.
  */
 
-import type { DecisionType } from '../common.js';
+import type { DecisionType, McpServerInfo } from '../common.js';
 import type { OutputBuilder } from '../output/OutputBuilder.js';
-import { asString, mixinCommon, type CommonEmitOptions, type CommonJsonOutput } from './_common.js';
+import { asString, hasHookSpecificFields, mixinCommon, type CommonEmitOptions, type CommonJsonOutput } from './_common.js';
 import { emitJson } from './_emit.js';
 import { readHookInput, type RawHookInput } from './_parse.js';
 
@@ -23,12 +23,13 @@ export interface PreToolUseInput extends RawHookInput<'PreToolUse'> {
     tool_name: string;
     tool_input: Record<string, unknown>;
     tool_use_id: string;
+    mcp_server?: McpServerInfo;
 }
 
 export interface PreToolUseEmitOptions extends CommonEmitOptions {
     /** Added to Claude's context. Maps to `hookSpecificOutput.additionalContext`. */
     toClaude?: string | OutputBuilder;
-    /** allow / deny / ask. Maps to `hookSpecificOutput.permissionDecision`. */
+    /** allow / deny / ask / defer. Maps to `hookSpecificOutput.permissionDecision`. */
     decision?: DecisionType;
     /** Explanation Claude (or the user, for `ask`) sees alongside the decision. */
     reason?: string;
@@ -56,20 +57,13 @@ export class PreToolUse {
     static emitOutput(opts: PreToolUseEmitOptions = {}): never {
         const out = mixinCommon<PreToolUseJsonOutput>({}, opts);
 
-        const hasHS =
-            opts.decision !== undefined ||
-            opts.reason !== undefined ||
-            opts.updatedInput !== undefined ||
-            opts.toClaude !== undefined;
+        const hs: PreToolUseHookSpecific = { hookEventName: 'PreToolUse' };
+        if (opts.decision !== undefined) hs.permissionDecision = opts.decision;
+        if (opts.reason !== undefined) hs.permissionDecisionReason = opts.reason;
+        if (opts.updatedInput !== undefined) hs.updatedInput = opts.updatedInput;
+        if (opts.toClaude !== undefined) hs.additionalContext = asString(opts.toClaude);
+        if (hasHookSpecificFields(hs)) out.hookSpecificOutput = hs;
 
-        if (hasHS) {
-            const hs: PreToolUseHookSpecific = { hookEventName: 'PreToolUse' };
-            if (opts.decision !== undefined) hs.permissionDecision = opts.decision;
-            if (opts.reason !== undefined) hs.permissionDecisionReason = opts.reason;
-            if (opts.updatedInput !== undefined) hs.updatedInput = opts.updatedInput;
-            if (opts.toClaude !== undefined) hs.additionalContext = asString(opts.toClaude);
-            out.hookSpecificOutput = hs;
-        }
         return emitJson(out);
     }
 }
