@@ -141,5 +141,6 @@ vite.config.ts.timestamp-*
 # Local-only state
 .claude/settings.local.json
 .claude/CLAUDE.local.md
+.claude/worktrees/
 .vector-memory/
 __ARCHIVE__/
