@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-27
+
 Synced with the Claude Code 2.1.283 hook schema.
 
 ### Added
@@ -101,4 +103,6 @@ new compile errors in code that relied on the old (wrong) shapes:
   showing deny / allow / ask / `updatedInput` / context-injection
   patterns.
 
+[Unreleased]: https://github.com/aeriondyseti/hook-kit/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/aeriondyseti/hook-kit/releases/tag/v1.1.0
 [1.0.0]: https://github.com/aeriondyseti/hook-kit/releases/tag/v1.0.0
