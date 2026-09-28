@@ -48,4 +48,27 @@ describe('UserPromptSubmit', () => {
         });
         expect(payload).toEqual({ systemMessage: '\nhello' });
     });
+
+    it('parses source', () => {
+        testHook({ ...baseInput, source: 'loop_wakeup' }, () => {
+            expect(UserPromptSubmit.parse().source).toBe('loop_wakeup');
+            UserPromptSubmit.emitOutput({});
+        });
+    });
+
+    it('maps suppressOriginalPrompt and sessionTitle into hookSpecificOutput', () => {
+        const { payload } = testHook(baseInput, () => {
+            UserPromptSubmit.parse();
+            UserPromptSubmit.emitOutput({ deny: true, reason: 'secret', suppressOriginalPrompt: true, sessionTitle: 'Math' });
+        });
+        expect(payload).toEqual({
+            decision: 'block',
+            reason: 'secret',
+            hookSpecificOutput: {
+                hookEventName: 'UserPromptSubmit',
+                suppressOriginalPrompt: true,
+                sessionTitle: 'Math',
+            },
+        });
+    });
 });

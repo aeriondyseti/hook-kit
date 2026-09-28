@@ -18,9 +18,10 @@
 import { ICONS, OutputBuilder, runHook, SessionStart } from '../../src/index.js';
 
 export function buildContext(input: ReturnType<typeof SessionStart.parse>): string {
+    const model = input.model ?? 'unknown';
     return [
         `Session opened at ${new Date().toISOString()}.`,
-        `Source: ${input.source}. Model: ${input.model}.`,
+        `Source: ${input.source}. Model: ${model}.`,
         `Working directory: ${input.cwd}.`,
     ].join('\n');
 }
@@ -28,7 +29,7 @@ export function buildContext(input: ReturnType<typeof SessionStart.parse>): stri
 export function handle(input: ReturnType<typeof SessionStart.parse>): void {
     const toUser = new OutputBuilder().appendLine(
         `${ICONS.info} <color:"cyan">session started</color> ` +
-        `<color:"gray">(${input.source}, ${input.model})</color>`,
+        `<color:"gray">(${input.source}${input.model ? `, ${input.model}` : ''})</color>`,
     );
 
     SessionStart.emitOutput({

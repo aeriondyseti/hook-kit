@@ -10,7 +10,7 @@ import { emitJson } from './_emit.js';
 import { readHookInput, type RawHookInput } from './_parse.js';
 
 export interface SessionEndInput extends RawHookInput<'SessionEnd'> {
-    reason: 'clear' | 'logout' | 'prompt_input_exit' | 'other';
+    reason: 'clear' | 'resume' | 'logout' | 'prompt_input_exit' | 'other';
 }
 
 export type SessionEndEmitOptions = CommonEmitOptions;

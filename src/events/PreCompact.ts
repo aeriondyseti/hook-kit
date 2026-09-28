@@ -11,7 +11,8 @@ import { readHookInput, type RawHookInput } from './_parse.js';
 
 export interface PreCompactInput extends RawHookInput<'PreCompact'> {
     trigger: 'manual' | 'auto';
-    custom_instructions?: string;
+    /** Extra instructions for the summary (e.g. from `/compact <text>`); `null` when none were given. */
+    custom_instructions: string | null;
 }
 
 export interface PreCompactEmitOptions extends CommonEmitOptions {

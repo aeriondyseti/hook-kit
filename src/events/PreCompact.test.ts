@@ -8,6 +8,7 @@ const baseInput: PreCompactInput = {
     transcript_path: '/tmp/t.jsonl',
     cwd: '/tmp',
     trigger: 'auto',
+    custom_instructions: null,
 };
 
 describe('PreCompact', () => {

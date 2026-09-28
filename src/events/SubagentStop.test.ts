@@ -8,6 +8,9 @@ const baseInput: SubagentStopInput = {
     transcript_path: '/tmp/t.jsonl',
     cwd: '/tmp',
     stop_hook_active: false,
+    agent_id: 'a',
+    agent_type: 'Explore',
+    agent_transcript_path: '/tmp/a.jsonl',
 };
 
 describe('SubagentStop', () => {
@@ -15,6 +18,7 @@ describe('SubagentStop', () => {
         const { payload } = testHook(baseInput, () => {
             const input = SubagentStop.parse();
             expect(input.stop_hook_active).toBe(false);
+            expect(input.agent_type).toBe('Explore');
             SubagentStop.emitOutput({});
         });
         expect(payload).toEqual({});
@@ -26,5 +30,15 @@ describe('SubagentStop', () => {
             SubagentStop.emitOutput({ deny: true, reason: 'more work' });
         });
         expect(payload).toEqual({ decision: 'block', reason: 'more work' });
+    });
+
+    it('maps toClaude to hookSpecificOutput.additionalContext', () => {
+        const { payload } = testHook(baseInput, () => {
+            SubagentStop.parse();
+            SubagentStop.emitOutput({ toClaude: 'also check tests' });
+        });
+        expect(payload).toEqual({
+            hookSpecificOutput: { hookEventName: 'SubagentStop', additionalContext: 'also check tests' },
+        });
     });
 });

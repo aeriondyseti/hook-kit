@@ -29,4 +29,22 @@ describe('Notification', () => {
         });
         expect(payload).toEqual({ systemMessage: '\nheads up' });
     });
+
+    it('accepts notification types newer than the known list', () => {
+        testHook({ ...baseInput, notification_type: 'some_future_type' }, () => {
+            expect(Notification.parse().notification_type).toBe('some_future_type');
+            Notification.emitOutput({});
+        });
+    });
+
+    it('maps toClaude and terminalSequence', () => {
+        const { payload } = testHook(baseInput, () => {
+            Notification.parse();
+            Notification.emitOutput({ toClaude: 'user was pinged', terminalSequence: '\u001b]9;ping\u0007' });
+        });
+        expect(payload).toEqual({
+            terminalSequence: '\u001b]9;ping\u0007',
+            hookSpecificOutput: { hookEventName: 'Notification', additionalContext: 'user was pinged' },
+        });
+    });
 });
